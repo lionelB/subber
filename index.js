@@ -94,9 +94,7 @@ program.args.forEach(function(inputFile){
 
   readFile(inputFile, {encoding: "utf8"})
     .then( resync.bind(null, delay) )
-    .then( function( newSrt ) {
-      return writeFile(outputFile, newSrt );
-    })
+    .then( writeFile.bind(null, outputFile) )
     .then(function(){
       console.log(inputFile, '... done');
     });
