@@ -21,12 +21,16 @@ program
   .option('-o, --output  [name]', 'the output filename')
   .parse(process.argv);
 
+if(program.args.length === 0) {
+  program.help();
+  return;
+}
+
 if (!program.forward && !program.rewind ) {
   program.help();
   return;
 }
 
-var outputFile = program.output || program.input.split(".srt").join('2.srt');
 var delay = parseInt(program.forward || program.rewind || DEFAULT_DELAY, 10);
 
 if (program.rewind) {
@@ -86,8 +90,10 @@ function resync (delay, srt) {
 }
 
 program.args.forEach(function(inputFile){
+  var outputFile = program.output || inputFile.split(".srt").join('.sync.srt');
+
   readFile(inputFile, {encoding: "utf8"})
-    .then( resync.bind(delay) )
+    .then( resync.bind(null, delay) )
     .then( function( newSrt ) {
       return writeFile(outputFile, newSrt );
     })
