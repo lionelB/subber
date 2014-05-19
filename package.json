@@ -1,0 +1,29 @@
+{
+  "name": "subber",
+  "version": "1.0.0",
+  "description": "Subber is a subtitle resync tool",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Lionel Breduillieard",
+  "license": "MIT",
+  "dependencies": {
+    "promise": "~4.0.0",
+    "commander": "~2.1.0"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/lionelB/subber.git"
+  },
+  "keywords": [
+    "srt",
+    "subtitles",
+    "resync"
+  ],
+  "bugs": {
+    "url": "https://github.com/lionelB/subber/issues"
+  },
+  "homepage": "https://github.com/lionelB/subber"
+}
