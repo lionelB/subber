@@ -2,7 +2,9 @@
   "name": "subber",
   "version": "1.0.0",
   "description": "Subber is a subtitle resync tool",
-  "bin": "./index.js",
+  "bin": {
+    "subber":"./index.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
