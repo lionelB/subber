@@ -26,7 +26,7 @@ if(program.args.length === 0) {
   return;
 }
 
-if (!program.forward && !program.rewind ) {
+if (isNaN(program.rewind) && isNaN(program.forward)) {
   program.help();
   return;
 }
