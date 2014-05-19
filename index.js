@@ -1,4 +1,7 @@
+#!/usr/bin/env node
+
 /*jshint node:true */
+
 "use strict";
 var program = require('commander');
 var fs = require("fs");
