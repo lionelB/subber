@@ -10,24 +10,24 @@ var readFile = Promise.denodeify(fs.readFile);
 var writeFile = Promise.denodeify(fs.writeFile);
 
 var DEFAULT_DELAY = 1000;
+process.title = "subber";
+program._name = "subber";
 
 program
-  .version('0.1')
+  .version('1.0')
+  .usage("[options] <file ...>")
   .option('-f, --forward [name]', 'forward delay value')
   .option('-r, --rewind [name]', 'rewind delay value')
-  .option('-i, --input [name]', 'the srt file to process')
   .option('-o, --output [name]', 'the output filename')
   .parse(process.argv);
 
 var hasAction = program.forward || program.rewind;
-
 
 if (!program.input || program.input === true || !hasAction) {
   program.help();
   return;
 }
 
-var inputFile = program.input;
 var outputFile = program.output || program.input.split(".srt").join('2.srt');
 var delay = parseInt(program.forward || program.rewind || DEFAULT_DELAY, 10);
 
@@ -66,12 +66,13 @@ function parse (srt) {
      return ms2ts(ms);
   });
 }
-
-readFile(inputFile, {encoding: "utf8"})
-  .then( parse )
-  .then( function( newSrt ) {
-    return writeFile(outputFile, newSrt );
-  })
-  .then(function(){
-    console.log('done!!');
-  });
+program.args.forEach(function(inputFile){
+  readFile(inputFile, {encoding: "utf8"})
+    .then( parse )
+    .then( function( newSrt ) {
+      return writeFile(outputFile, newSrt );
+    })
+    .then(function(){
+      console.log(inputFile, '... done');
+    });
+});
