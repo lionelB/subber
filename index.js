@@ -16,14 +16,12 @@ program._name = "subber";
 program
   .version('1.0')
   .usage("[options] <file ...>")
-  .option('-f, --forward [name]', 'forward delay value')
-  .option('-r, --rewind [name]', 'rewind delay value')
-  .option('-o, --output [name]', 'the output filename')
+  .option('-f, --forward [delay]', 'forward delay value in ms')
+  .option('-r, --rewind  [delay]', 'rewind delay value in ms')
+  .option('-o, --output  [name]', 'the output filename')
   .parse(process.argv);
 
-var hasAction = program.forward || program.rewind;
-
-if (!program.input || program.input === true || !hasAction) {
+if (!program.forward && !program.rewind ) {
   program.help();
   return;
 }
@@ -37,17 +35,32 @@ if (program.rewind) {
 
 
 
-
+/**
+ * Transform a strt timestamp to ms
+ * @param  {String}   ts a srt timestamp hh:mm:ss,ms
+ * @return {int}      number of millisecond
+ */
 function ts2ms(ts){
   return ( parseInt(ts[0], 10) * 3600 +
     parseInt(ts[1], 10) * 60   +
     parseInt(ts[2], 10)) * 1000 +
     parseInt(ts[3], 10);
 }
+
+/**
+ * Format a number on 2 digit
+ * @param  {int}      val  a number to format
+ * @return {String}   the formated number
+ */
 function format(val){
   return val > 9 ? ""+val : "0"+val;
 }
 
+/**
+ * Transform a number of millisecond into a srt timestamp
+ * @param  {int}      number of millisecond
+ * @return {String}   a srt timestamp hh:mm:ss,ms
+ */
 function ms2ts(ms){
   var scale = [3600*1000, 60*1000, 1000, 1 ];
   var ts = scale.map( function(val){
@@ -58,17 +71,23 @@ function ms2ts(ms){
   return ts.slice(0,3).join(":") + "," + ts[ts.length-1];
 }
 
-function parse (srt) {
-  // srt  = srt.substr(0, 300);
+/**
+ * Resync a str file with a delay
+ * @param  {int}    delay a delay in ms
+ * @param  {String} srt   a str file content
+ * @return {String}       the resync srt content
+ */
+function resync (delay, srt) {
   return srt.replace(/(\d{2}):(\d{2}):(\d{2}),(\d{3})/g, function(){
      var ms = ts2ms( [].slice.call(arguments, 1 , 5));
      ms += delay;
      return ms2ts(ms);
   });
 }
+
 program.args.forEach(function(inputFile){
   readFile(inputFile, {encoding: "utf8"})
-    .then( parse )
+    .then( resync.bind(delay) )
     .then( function( newSrt ) {
       return writeFile(outputFile, newSrt );
     })
